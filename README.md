@@ -1,7 +1,7 @@
 # Durra Field
 
 Built phone app only. Source is private, in OliverDurra/Durra-Grid
-(`src/field/`, built by `npm run field:build` from commit `b9e1f75`).
+(`src/field/`, built by `npm run field:build` from commit `4421911`).
 
 Open on a phone: **https://oliverdurra.github.io/durra-field/**
 
