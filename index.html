@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0e141c">
+<title>Durra Field</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<style>
+  :root { --bg:#0b1118; --panel:#141d28; --fg:#e3eaf2; --muted:#8a99ab; --line:rgba(255,255,255,0.1); --accent:#ffc400; --ok:#5fd38d; --err:#ff7a7a; }
+  * { box-sizing:border-box; }
+  html, body { margin:0; background:var(--bg); color:var(--fg); font:15px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  main { max-width:520px; margin:0 auto; padding:12px 16px calc(24px + env(safe-area-inset-bottom)); }
+  header { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+  h1 { font-size:17px; margin:0; }
+  .badge { font-size:11px; color:#0b1118; background:var(--ok); border-radius:4px; padding:1px 6px; font-weight:700; }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:12px 14px; margin-bottom:12px; }
+  .addr { font:600 22px/1.25 ui-monospace, Menlo, Consolas, monospace; color:var(--accent); word-break:keep-all; overflow-wrap:normal; font-variant-numeric: slashed-zero; }
+  .err-line { color:#b9d4ec; margin-top:4px; }
+  .kv { color:var(--muted); font-size:13px; word-break:break-all; }
+  .grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-top:10px; }
+  .grid div { background:rgba(255,255,255,0.03); border-radius:8px; padding:6px 8px; }
+  .grid b { display:block; font-size:18px; }
+  label { display:block; color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:.04em; margin:10px 0 4px; }
+  input[type=text], input[type=number], input[type=url] { width:100%; background:#0e1620; color:var(--fg); border:1px solid var(--line); border-radius:8px; padding:10px; font:inherit; }
+  input.mono { font-family:ui-monospace, Menlo, Consolas, monospace; }
+  button { width:100%; margin-top:10px; padding:12px; border-radius:10px; border:1px solid var(--line); background:#22303f; color:var(--fg); font:600 15px system-ui, sans-serif; }
+  button.primary { background:var(--accent); color:#111; border-color:transparent; }
+  .row { display:flex; gap:8px; } .row > * { flex:1; }
+  .msg { min-height:1.2em; margin:6px 0 0; font-size:14px; }
+  .msg.ok { color:var(--ok); } .msg.err { color:var(--err); }
+  .hint { color:var(--muted); font-size:12.5px; margin-top:6px; }
+  .chk { font-size:13.5px; margin-top:6px; } .chk.pass b { color:var(--ok); } .chk.warn b { color:#f0c34a; } .chk.fail b { color:var(--err); }
+  body:not(.running) .when-running { display:none; }
+  body.running .when-setup { display:none; }
+</style>
+</head>
+<body>
+<main>
+  <header><h1>Durra Field</h1><span class="badge" id="offline">loading…</span></header>
+
+  <section class="card">
+    <div class="addr" id="addr">not started</div>
+    <div class="err-line" id="err">Set up below, then start.</div>
+    <div class="kv" id="pos"></div>
+    <div class="grid">
+      <div><span class="kv">steps</span><b id="steps">0</b></div>
+      <div><span class="kv">heading</span><b id="hdg">—</b></div>
+      <div><span class="kv">since fix</span><b id="since">—</b></div>
+    </div>
+    <div class="kv" id="cal" style="margin-top:8px"></div>
+    <div class="kv" id="sens"></div>
+    <p class="msg" id="msg"></p>
+    <button id="force" hidden>Accept the refused fix anyway</button>
+  </section>
+
+  <section class="card when-setup">
+    <label for="startAddress">Start: I am in (address)</label>
+    <input id="startAddress" class="mono" type="text" placeholder="G1·J648·D23·O520·K730·H507·T364" spellcheck="false" autocapitalize="characters">
+    <div class="row">
+      <div><label for="declination">Declination °E (required)</label><input id="declination" type="number" step="0.1" inputmode="decimal" placeholder="13.2"></div>
+      <div><label for="stride">Stride m</label><input id="stride" type="number" step="0.01" inputmode="decimal" value="0.75"></div>
+    </div>
+    <div class="hint">Declination is on your map margin or in ATAK. West is negative. The phone's compass reads magnetic north; this converts it to true.</div>
+    <button id="checkBtn">Sensor self-check (10 s)</button>
+    <div id="checkOut"></div>
+    <button id="startBtn" class="primary">Enable sensors &amp; start</button>
+  </section>
+
+  <section class="card when-running">
+    <label for="fixAddress">Fix: I am in (address)</label>
+    <input id="fixAddress" class="mono" type="text" placeholder="G1·J648·D23·O520·K730·H507·T364" spellcheck="false" autocapitalize="characters">
+    <button id="fixBtn" class="primary">Apply fix</button>
+    <label for="brgAddress">Bearing to a landmark (its address)</label>
+    <input id="brgAddress" class="mono" type="text" placeholder="G1·J648·D23·O520·K740·H1" spellcheck="false" autocapitalize="characters">
+    <div class="hint">Point the top of the phone (or its camera, if held upright) at the landmark, then tap.</div>
+    <button id="brgBtn">Take bearing</button>
+  </section>
+
+  <section class="card when-running">
+    <label for="cpId">Field test: I am at checkpoint</label>
+    <input id="cpId" class="mono" type="text" value="CP1" spellcheck="false" autocapitalize="characters">
+    <button id="cpBtn">Log checkpoint now</button>
+    <div class="hint">Scoring only, it never moves your estimate. Stand on the checkpoint, tap, keep walking. Export the trace afterwards and grade it with <code>score-walk</code> (README Phase 9).</div>
+  </section>
+
+  <section class="card">
+    <label for="callsign">Callsign</label><input id="callsign" type="text" placeholder="e.g. ALPHA-2">
+    <label for="server">Globe server (optional)</label><input id="server" type="url" placeholder="https://192.168.1.20:8443">
+    <label style="text-transform:none;letter-spacing:0;font-size:14px;color:var(--fg)"><input id="sendToggle" type="checkbox"> Send my estimate to the globe <span class="kv" id="sendStat"></span></label>
+    <div class="row"><button id="recBtn">Record sensors</button><button id="exportBtn">Export trace</button></div>
+    <div class="hint">Recording starts automatically at Start. A trace replays exactly on a laptop: <code>node scripts/replay-trace.mjs trace.jsonl</code>.</div>
+  </section>
+</main>
+<script src="app.js"></script>
+</body>
+</html>
