@@ -57,9 +57,9 @@
 
   <section class="card when-setup">
     <label for="startAddress">Start: I am in (address)</label>
-    <input id="startAddress" class="mono" type="text" placeholder="G1·J648·D23·O520·K730·H507·T364" spellcheck="false" autocapitalize="characters">
+    <input id="startAddress" class="mono" type="text" placeholder="type it, e.g. G1 J648 D23 O520 K730 H507 T364" spellcheck="false" autocapitalize="characters">
     <div class="row">
-      <div><label for="declination">Declination °E (required)</label><input id="declination" type="number" step="0.1" inputmode="decimal" placeholder="13.2"></div>
+      <div><label for="declination">Declination °E (required)</label><input id="declination" type="text" inputmode="text" autocomplete="off" placeholder="type it, e.g. 13.2"></div>
       <div><label for="stride">Stride m</label><input id="stride" type="number" step="0.01" inputmode="decimal" value="0.75"></div>
     </div>
     <div class="hint">Declination is on your map margin or in ATAK. West is negative. The phone's compass reads magnetic north; this converts it to true.</div>
@@ -70,10 +70,10 @@
 
   <section class="card when-running">
     <label for="fixAddress">Fix: I am in (address)</label>
-    <input id="fixAddress" class="mono" type="text" placeholder="G1·J648·D23·O520·K730·H507·T364" spellcheck="false" autocapitalize="characters">
+    <input id="fixAddress" class="mono" type="text" placeholder="e.g. G1 J648 D23 O520 K730 H507 T364" spellcheck="false" autocapitalize="characters">
     <button id="fixBtn" class="primary">Apply fix</button>
     <label for="brgAddress">Bearing to a landmark (its address)</label>
-    <input id="brgAddress" class="mono" type="text" placeholder="G1·J648·D23·O520·K740·H1" spellcheck="false" autocapitalize="characters">
+    <input id="brgAddress" class="mono" type="text" placeholder="e.g. G1 J648 D23 O520 K740 H1" spellcheck="false" autocapitalize="characters">
     <div class="hint">Point the top of the phone (or its camera, if held upright) at the landmark, then tap.</div>
     <button id="brgBtn">Take bearing</button>
   </section>
