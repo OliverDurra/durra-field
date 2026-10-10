@@ -1,5 +1,5 @@
 // Durra Field service worker: cache-first, so the app opens with no network.
-const CACHE = "durra-field-ca754eacc30e";
+const CACHE = "durra-field-10b1296440c5";
 const FILES = ["./", "index.html", "app.js", "manifest.webmanifest", "icon.svg"];
 self.addEventListener("install", (e) => e.waitUntil(caches.open(CACHE).then((c) => c.addAll(FILES)).then(() => self.skipWaiting())));
 self.addEventListener("activate", (e) => e.waitUntil(caches.keys().then((ks) => Promise.all(ks.filter((k) => k !== CACHE).map((k) => caches.delete(k)))).then(() => self.clients.claim())));
