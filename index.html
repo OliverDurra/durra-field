@@ -61,10 +61,10 @@
     <label for="startAddress">Start: I am in (address)</label>
     <input id="startAddress" class="mono" type="text" placeholder="type your own: G1 J… D… O… K… H… T…" spellcheck="false" autocapitalize="characters">
     <div class="row">
-      <div><label for="declination">Declination °E (required)</label><input id="declination" type="text" inputmode="text" autocomplete="off" placeholder="type it, e.g. 13.2"></div>
+      <div><label for="declination">Declination °E (auto)</label><input id="declination" type="text" inputmode="text" autocomplete="off" placeholder="leave empty: automatic"></div>
       <div><label for="stride">Stride m</label><input id="stride" type="number" step="0.01" inputmode="decimal" value="0.75"></div>
     </div>
-    <div class="hint">Declination is on your map margin or in ATAK. West is negative. The phone's compass reads magnetic north; this converts it to true.</div>
+    <div class="hint">Declination converts the compass's magnetic north to true north. Leave it empty and the app works it out for your start position (World Magnetic Model 2025, offline). It is not something you measure: Santa Rosa is about 13° E. Type a value only to override (west negative).</div>
     <button id="checkBtn">Sensor self-check (10 s)</button>
     <div id="checkOut"></div>
     <button id="startBtn" class="primary">Enable sensors &amp; start</button>
